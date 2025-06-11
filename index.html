@@ -325,9 +325,9 @@
                         <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#00f2ea] to-[#00c4fc] flex items-center justify-center text-black font-bold mr-2">+</div>
                         <p class="text-gray-300">100 points per correct answer</p>
                     </div>
-                    <p class="text-green-400 mb-1">🟢 400 points = Ready to Moderate</p>
-                    <p class="text-yellow-400 mb-1">🟡 200-300 points = Needs Policy Training</p>
-                    <p class="text-red-400">🔴 0-100 points = High Risk / Not Suitable</p>
+                    <p class="text-green-400 mb-1">🟢 300 points = Ready to Moderate</p>
+                    <p class="text-yellow-400 mb-1">🟡 100-200 points = Needs Policy Training</p>
+                    <p class="text-red-400">🔴 0-99 points = High Risk / Not Suitable</p>
                 </div>
                 
                 <button id="start-btn" class="primary-btn w-full">
@@ -359,7 +359,7 @@
                     <div class="w-8 h-8 rounded-full bg-[#2d2d2d] flex items-center justify-center text-[#00f2ea] font-bold mr-2">
                         <span id="question-number">1</span>
                     </div>
-                    <span class="text-gray-400">/4</span>
+                    <span class="text-gray-400">/3</span>
                 </div>
                 
                 <div id="timer-container" class="timer-circle">
@@ -591,20 +591,20 @@
                     explanation: "This image shows a child taking a selfie within the school premises with visible indicators of personal information (School Name, Child Name), useful for assessing judgment on child safety and privacy policy enforcement in moderation roles.",
                     points: 100
                 },
-                {
-                    title: "Scenario 4: Video Review",
-                    description: "Would you keep this video or take down?",
-                    type: "binary-choice",
-                    mediaType: "video",
-                    mediaPath: "Muslim woman assaulted in Canada in hate-motivated incident.mp4", // Path to the video in TIKTOK folder
-                    options: [
-                        "Keep the video",
-                        "Take down the video"
-                    ],
-                    correctAnswer: 1, // Index of correct option (0-based)
-                    explanation: "This video involves racism, hate speech and assault against a Muslim woman, which violates platform policies on hate speech and violence.",
-                    points: 100
-                }
+                // {
+                //     title: "Scenario 4: Video Review",
+                //     description: "Would you keep this video or take down?",
+                //     type: "binary-choice",
+                //     mediaType: "video",
+                //     mediaPath: "Muslim woman assaulted in Canada in hate-motivated incident.gif", // Path to the video in TIKTOK folder
+                //     options: [
+                //         "Keep the video",
+                //         "Take down the video"
+                //     ],
+                //     correctAnswer: 1, // Index of correct option (0-based)
+                //     explanation: "This video involves racism, hate speech and assault against a Muslim woman, which violates platform policies on hate speech and violence.",
+                //     points: 100
+                // }
             ];
             
             // Variables
@@ -930,12 +930,12 @@
                 
                 // Update score display
                 scoreValue.textContent = score;
-                const percentage = (score / 400) * 100;
+                const percentage = (score / 300) * 100;
                 const circumference = 2 * Math.PI * 45;
                 scoreCircle.style.strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
                 
                 // Update rating
-                if (score >= 400) {
+                if (score >= 300) {
                     ratingContainer.className = 'mb-6 p-4 rounded-lg bg-green-900 bg-opacity-30';
                     ratingText.className = 'text-xl font-bold mb-2 text-center text-green-400';
                     ratingText.textContent = '🟢 Ready to Moderate';
@@ -1017,9 +1017,9 @@
                 certificateScreen.classList.remove('hidden');
                 
                 // Update certificate
-                certificateScore.textContent = `${score/100}/4`;
+                certificateScore.textContent = `${score/100}/3`;
                 
-                if (score >= 400) {
+                if (score >= 300) {
                     certificateRating.textContent = 'Ready to Moderate';
                     certificateRating.className = 'text-xl font-bold mb-1 text-green-600';
                 } else if (score >= 200) {
