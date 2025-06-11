@@ -1,0 +1,1074 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderator Arena - KSA Screening</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .app-container {
+            background-color: #121212;
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card {
+            background-color: #1d1d1d;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .primary-btn {
+            background: linear-gradient(90deg, #00f2ea, #00c4fc);
+            color: #000;
+            font-weight: bold;
+            border-radius: 4px;
+            padding: 12px 24px;
+            transition: all 0.3s;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 242, 234, 0.3);
+        }
+        
+        .secondary-btn {
+            background-color: #2d2d2d;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 4px;
+            padding: 12px 24px;
+            transition: all 0.3s;
+        }
+        
+        .secondary-btn:hover {
+            background-color: #3d3d3d;
+        }
+        
+        .option {
+            background-color: #2d2d2d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .option:hover {
+            background-color: #3d3d3d;
+        }
+        
+        .option.selected {
+            border: 2px solid #00f2ea;
+            background-color: rgba(0, 242, 234, 0.1);
+        }
+        
+        .option.correct {
+            border: 2px solid #4ade80;
+            background-color: rgba(74, 222, 128, 0.1);
+        }
+        
+        .option.incorrect {
+            border: 2px solid #f87171;
+            background-color: rgba(248, 113, 113, 0.1);
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #2d2d2d;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00f2ea, #00c4fc);
+            transition: width 0.5s ease;
+        }
+        
+        .timer-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(#00f2ea 0%, #2d2d2d 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 1s linear;
+        }
+        
+        .timer-inner {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: #1d1d1d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-variant-numeric: tabular-nums;
+            font-weight: bold;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: confetti-fall 3s ease-in-out forwards;
+            top: -20px; /* Start above the viewport */
+            z-index: 1000;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(800px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .points-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #00f2ea;
+            text-shadow: 0 0 10px rgba(0, 242, 234, 0.5);
+            opacity: 0;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        @keyframes points-animation {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .badge {
+            background-color: #2d2d2d;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .badge.earned {
+            background: linear-gradient(135deg, #2d2d2d, #3d3d3d);
+            box-shadow: 0 4px 12px rgba(0, 242, 234, 0.2);
+        }
+        
+        .badge-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #3d3d3d;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .badge.earned .badge-icon {
+            background: linear-gradient(90deg, #00f2ea, #00c4fc);
+            color: #000;
+        }
+        
+        .certificate {
+            background-color: #fff;
+            color: #000;
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #00f2ea, #00c4fc);
+        }
+        
+        .certificate-score {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #00f2ea, #00c4fc);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 24px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .points-added {
+            position: absolute;
+            color: #00f2ea;
+            font-weight: bold;
+            font-size: 24px;
+            pointer-events: none;
+            animation: points-float 1.5s ease-out forwards;
+            text-shadow: 0 0 10px rgba(0, 242, 234, 0.5);
+            z-index: 100;
+        }
+        
+        @keyframes points-float {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.5);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(0) scale(1.2);
+            }
+            30% {
+                transform: translateY(-20px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.8);
+            }
+        }
+        
+        .media-container img, .media-container video {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        video::-webkit-media-controls-panel {
+            background-color: rgba(29, 29, 29, 0.7);
+        }
+        
+        video::-webkit-media-controls-play-button {
+            background-color: #00f2ea;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Points Popup -->
+        <div id="points-popup" class="points-popup">+100</div>
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="p-6 min-h-screen flex flex-col">
+            <div class="card p-6 mb-6 fade-in">
+                <h1 class="text-3xl font-bold mb-2 bg-gradient-to-r from-[#00f2ea] to-[#00c4fc] text-transparent bg-clip-text">Moderator Arena</h1>
+                <h2 class="text-xl font-semibold text-gray-300 mb-6">KSA Screening Challenge</h2>
+                
+                <div class="bg-[#2d2d2d] p-4 rounded-lg mb-6">
+                    <h3 class="font-semibold text-[#00f2ea] mb-2">Purpose:</h3>
+                    <p class="text-gray-300">Screening candidates for cultural awareness, policy enforcement, judgment skills, and digital safety.</p>
+                    
+                    <h3 class="font-semibold text-[#00f2ea] mt-4 mb-2">Duration:</h3>
+                    <p class="text-gray-300">~10–12 minutes</p>
+                </div>
+                
+                <p class="text-lg text-gray-300 mb-6">Welcome to Moderator Challenge! You'll face 4 real-world scenarios. Each correct answer scores you points. Think fast, think fair!</p>
+                
+                <div class="bg-[#2d2d2d] p-4 rounded-lg mb-8">
+                    <h3 class="font-semibold text-[#00f2ea] mb-2">🎯 Scoring System:</h3>
+                    <div class="flex items-center mb-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-[#00f2ea] to-[#00c4fc] flex items-center justify-center text-black font-bold mr-2">+</div>
+                        <p class="text-gray-300">100 points per correct answer</p>
+                    </div>
+                    <p class="text-green-400 mb-1">🟢 400 points = Ready to Moderate</p>
+                    <p class="text-yellow-400 mb-1">🟡 200-300 points = Needs Policy Training</p>
+                    <p class="text-red-400">🔴 0-100 points = High Risk / Not Suitable</p>
+                </div>
+                
+                <button id="start-btn" class="primary-btn w-full">
+                    Start Challenge
+                </button>
+            </div>
+            
+            <div class="card p-6 fade-in">
+                <h3 class="font-semibold text-[#00f2ea] mb-4">How to Play:</h3>
+                <div class="flex items-start mb-3">
+                    <div class="w-8 h-8 rounded-full bg-[#2d2d2d] flex items-center justify-center text-[#00f2ea] font-bold mr-2 flex-shrink-0">1</div>
+                    <p class="text-gray-300">You have 30 seconds to answer each question</p>
+                </div>
+                <div class="flex items-start mb-3">
+                    <div class="w-8 h-8 rounded-full bg-[#2d2d2d] flex items-center justify-center text-[#00f2ea] font-bold mr-2 flex-shrink-0">2</div>
+                    <p class="text-gray-300">Select the best moderation action for each scenario</p>
+                </div>
+                <div class="flex items-start">
+                    <div class="w-8 h-8 rounded-full bg-[#2d2d2d] flex items-center justify-center text-[#00f2ea] font-bold mr-2 flex-shrink-0">3</div>
+                    <p class="text-gray-300">Earn badges and a certificate based on your performance</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Question Screen -->
+        <div id="question-screen" class="hidden p-6 min-h-screen">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-[#2d2d2d] flex items-center justify-center text-[#00f2ea] font-bold mr-2">
+                        <span id="question-number">1</span>
+                    </div>
+                    <span class="text-gray-400">/4</span>
+                </div>
+                
+                <div id="timer-container" class="timer-circle">
+                    <div class="timer-inner">
+                        <span id="timer">30</span>
+                    </div>
+                </div>
+                
+                <div class="bg-[#2d2d2d] px-3 py-1 rounded-full">
+                    <span class="text-[#00f2ea] font-bold" id="points-display">0</span>
+                    <span class="text-gray-400">pts</span>
+                </div>
+            </div>
+            
+            <div class="progress-bar mb-6">
+                <div id="progress" class="progress" style="width: 0%"></div>
+            </div>
+            
+            <div class="card p-6 mb-6">
+                <h2 id="scenario-title" class="text-xl font-bold text-[#00f2ea] mb-4"></h2>
+                <p id="scenario-description" class="text-gray-300 mb-6"></p>
+                
+                <div id="media-container" class="mb-6 hidden media-container">
+                    <div id="image-container" class="hidden mb-4">
+                        <!-- Image will be dynamically set in JavaScript -->
+                    </div>
+                    
+                    <div id="video-container" class="hidden mb-4">
+                        <!-- Video will be dynamically set in JavaScript -->
+                    </div>
+                </div>
+                
+                <div id="options-container" class="space-y-3">
+                    <!-- Options will be inserted here -->
+                </div>
+            </div>
+            
+            <div id="explanation-container" class="card p-6 mb-6 hidden">
+                <h3 class="font-semibold text-[#00f2ea] mb-2">Explanation:</h3>
+                <p id="explanation-text" class="text-gray-300"></p>
+            </div>
+            
+            <div class="text-center">
+                <button id="next-btn" class="hidden primary-btn w-full">
+                    Next Question
+                </button>
+                <button id="finish-btn" class="hidden primary-btn w-full">
+                    Finish & See Results
+                </button>
+            </div>
+        </div>
+        
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden p-6 min-h-screen">
+            <div class="card p-6 mb-6">
+                <h2 class="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-[#00f2ea] to-[#00c4fc] text-transparent bg-clip-text">Challenge Complete!</h2>
+                
+                <div class="flex justify-center mb-6">
+                    <div class="relative w-40 h-40">
+                        <svg class="w-40 h-40" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#2d2d2d" stroke-width="8"/>
+                            <circle id="score-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="0 283" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#00f2ea" />
+                                    <stop offset="100%" stop-color="#00c4fc" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center flex-col">
+                            <span id="score-value" class="text-4xl font-bold text-white">0</span>
+                            <span class="text-sm text-gray-400">points</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="rating-container" class="mb-6 p-4 rounded-lg bg-[#2d2d2d]">
+                    <h3 id="rating-text" class="text-xl font-bold mb-2 text-center"></h3>
+                    <p id="rating-description" class="text-gray-300 text-center"></p>
+                </div>
+                
+                <div class="mb-8 text-center">
+                    <h3 class="text-lg font-semibold text-gray-400 mb-3">Time Taken</h3>
+                    <p id="total-time" class="text-2xl font-bold text-[#00f2ea]">00:00</p>
+                </div>
+            </div>
+            
+            <div class="card p-6 mb-6">
+                <h3 class="text-lg font-semibold text-[#00f2ea] mb-4 text-center">Badges Earned</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div id="badge-1" class="badge">
+                        <div class="badge-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <p class="text-sm font-medium text-gray-400">Policy Enforcer</p>
+                    </div>
+                    <div id="badge-2" class="badge">
+                        <div class="badge-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <p class="text-sm font-medium text-gray-400">Misinformation Hunter</p>
+                    </div>
+                    <div id="badge-3" class="badge">
+                        <div class="badge-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <p class="text-sm font-medium text-gray-400">Safety Guardian</p>
+                    </div>
+                    <div id="badge-4" class="badge">
+                        <div class="badge-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <p class="text-sm font-medium text-gray-400">Quick Responder</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col space-y-3">
+                <button id="certificate-btn" class="primary-btn">
+                    View Certificate
+                </button>
+                <button id="restart-btn" class="secondary-btn">
+                    Restart Challenge
+                </button>
+            </div>
+        </div>
+        
+        <!-- Certificate Screen -->
+        <div id="certificate-screen" class="hidden p-6 min-h-screen">
+            <div class="certificate mb-6">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Certificate of Completion</h2>
+                    <p class="text-gray-600 mb-6">Moderator Arena - KSA Screening</p>
+                    
+                    <div class="mb-8">
+                        <p class="text-lg text-gray-700">This certifies that</p>
+                        <h3 class="text-2xl font-bold text-gray-900 my-2">Content Moderator</h3>
+                        <p class="text-lg text-gray-700">has successfully completed the Moderator Arena Challenge</p>
+                    </div>
+                    
+                    <div class="certificate-score mb-6">
+                        <span id="certificate-score">0/4</span>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <p id="certificate-rating" class="text-xl font-bold mb-1"></p>
+                        <p id="certificate-date" class="text-gray-600"></p>
+                    </div>
+                    
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-[#00f2ea]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <div class="text-center">
+                            <div class="h-px w-32 bg-[#00f2ea] mb-1"></div>
+                            <p class="text-gray-600 text-sm">Authorized Signature</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col space-y-3">
+                <button id="download-btn" class="primary-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Certificate
+                </button>
+                <button id="back-to-results-btn" class="secondary-btn">
+                    Back to Results
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quiz data
+            const quizData = [
+                {
+                    title: "Scenario 1: Misinformation Detection",
+                    description: "🔍 A viral video claims a local COVID-19 cure using a homemade herb mix. It has over 20K views.\n\nWhat should you do?",
+                    type: "multiple-choice",
+                    options: [
+                        "A. Leave it – it's just health advice.",
+                        "B. Add a disclaimer and allow it.",
+                        "C. Remove the video and mark it as medical misinformation.",
+                        "D. Send a message to the creator asking them to edit the video."
+                    ],
+                    correctAnswer: 2, // Index of correct option (0-based)
+                    explanation: "Most Social Media prohibits content that spreads health misinformation, especially when it contradicts official public health guidance.",
+                    points: 100
+                },
+                {
+                    title: "Scenario 2: Live Stream Violation",
+                    description: "🔍 During a live stream, a user briefly shows a pack of cigarettes while talking about \"what helps me chill.\"\n\nWhat's your decision?",
+                    type: "multiple-choice",
+                    options: [
+                        "A. No action – it's legal.",
+                        "B. Remove the live video – showing tobacco violates policy.",
+                        "C. Let it run – only alcohol and drugs are banned.",
+                        "D. Ban the user."
+                    ],
+                    correctAnswer: 1, // Index of correct option (0-based)
+                    explanation: "Most Social Media prohibits promotion of tobacco or smoking-related content, especially during live sessions, which have less content control.",
+                    points: 100
+                },
+                {
+                    title: "Scenario 3: Image Review",
+                    description: "Would you keep this image or take down?",
+                    type: "binary-choice",
+                    mediaType: "image",
+                    mediaPath: "Picture1.png", // Path to the image in TIKTOK folder
+                    options: [
+                        "Keep the image",
+                        "Take down the image"
+                    ],
+                    correctAnswer: 1, // Index of correct option (0-based)
+                    explanation: "This image shows a child taking a selfie within the school premises with visible indicators of personal information (School Name, Child Name), useful for assessing judgment on child safety and privacy policy enforcement in moderation roles.",
+                    points: 100
+                },
+                {
+                    title: "Scenario 4: Video Review",
+                    description: "Would you keep this video or take down?",
+                    type: "binary-choice",
+                    mediaType: "video",
+                    mediaPath: "Muslim woman assaulted in Canada in hate-motivated incident.mp4", // Path to the video in TIKTOK folder
+                    options: [
+                        "Keep the video",
+                        "Take down the video"
+                    ],
+                    correctAnswer: 1, // Index of correct option (0-based)
+                    explanation: "This video involves racism, hate speech and assault against a Muslim woman, which violates platform policies on hate speech and violence.",
+                    points: 100
+                }
+            ];
+            
+            // Variables
+            let currentQuestion = 0;
+            let score = 0;
+            let userAnswers = [];
+            let startTime;
+            let totalSeconds = 0;
+            let questionTimer;
+            let timeLeft = 30;
+            let answeredCurrentQuestion = false;
+            
+            // DOM Elements
+            const startScreen = document.getElementById('start-screen');
+            const questionScreen = document.getElementById('question-screen');
+            const resultsScreen = document.getElementById('results-screen');
+            const certificateScreen = document.getElementById('certificate-screen');
+            
+            const startBtn = document.getElementById('start-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const finishBtn = document.getElementById('finish-btn');
+            const restartBtn = document.getElementById('restart-btn');
+            const certificateBtn = document.getElementById('certificate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const backToResultsBtn = document.getElementById('back-to-results-btn');
+            
+            const questionNumber = document.getElementById('question-number');
+            const progress = document.getElementById('progress');
+            const timer = document.getElementById('timer');
+            const timerContainer = document.getElementById('timer-container');
+            const scenarioTitle = document.getElementById('scenario-title');
+            const scenarioDescription = document.getElementById('scenario-description');
+            const optionsContainer = document.getElementById('options-container');
+            const mediaContainer = document.getElementById('media-container');
+            const imageContainer = document.getElementById('image-container');
+            const videoContainer = document.getElementById('video-container');
+            const pointsDisplay = document.getElementById('points-display');
+            const pointsPopup = document.getElementById('points-popup');
+            const explanationContainer = document.getElementById('explanation-container');
+            const explanationText = document.getElementById('explanation-text');
+            
+            const scoreValue = document.getElementById('score-value');
+            const scoreCircle = document.getElementById('score-circle');
+            const ratingContainer = document.getElementById('rating-container');
+            const ratingText = document.getElementById('rating-text');
+            const ratingDescription = document.getElementById('rating-description');
+            const totalTime = document.getElementById('total-time');
+            
+            const certificateScore = document.getElementById('certificate-score');
+            const certificateRating = document.getElementById('certificate-rating');
+            const certificateDate = document.getElementById('certificate-date');
+            
+            // Event Listeners
+            startBtn.addEventListener('click', startQuiz);
+            nextBtn.addEventListener('click', nextQuestion);
+            finishBtn.addEventListener('click', showResults);
+            restartBtn.addEventListener('click', restartQuiz);
+            certificateBtn.addEventListener('click', showCertificate);
+            backToResultsBtn.addEventListener('click', backToResults);
+            downloadBtn.addEventListener('click', downloadCertificate);
+            
+            // Functions
+            function startQuiz() {
+                startScreen.classList.add('hidden');
+                questionScreen.classList.remove('hidden');
+                startTime = new Date();
+                loadQuestion();
+            }
+            
+            function loadQuestion() {
+                const question = quizData[currentQuestion];
+                answeredCurrentQuestion = false;
+                
+                // Reset timer
+                timeLeft = 30;
+                timer.textContent = timeLeft;
+                timerContainer.style.background = 'conic-gradient(#00f2ea 360deg, #2d2d2d 0deg)';
+                
+                if (questionTimer) {
+                    clearInterval(questionTimer);
+                }
+                
+                questionTimer = setInterval(() => {
+                    timeLeft--;
+                    timer.textContent = timeLeft;
+                    
+                    // Update timer circle
+                    const percentage = (timeLeft / 30) * 100;
+                    timerContainer.style.background = `conic-gradient(#00f2ea ${percentage * 3.6}deg, #2d2d2d 0deg)`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(questionTimer);
+                        if (!answeredCurrentQuestion) {
+                            // Time's up, show correct answer
+                            showAnswer(-1); // -1 indicates no answer selected
+                        }
+                    }
+                }, 1000);
+                
+                questionNumber.textContent = currentQuestion + 1;
+                progress.style.width = `${((currentQuestion) / quizData.length) * 100}%`;
+                
+                scenarioTitle.textContent = question.title;
+                scenarioDescription.textContent = question.description;
+                
+                // Hide explanation
+                explanationContainer.classList.add('hidden');
+                
+                // Handle media if present
+                if (question.mediaType) {
+                    mediaContainer.classList.remove('hidden');
+                    
+                    if (question.mediaType === 'image') {
+                        imageContainer.classList.remove('hidden');
+                        videoContainer.classList.add('hidden');
+                        
+                        // Clear previous image and add new one
+                        imageContainer.innerHTML = '';
+                        const img = document.createElement('img');
+                        img.src = question.mediaPath;
+                        img.alt = "Content for review";
+                        img.className = "w-full h-auto rounded-lg";
+                        imageContainer.appendChild(img);
+                        
+                    } else if (question.mediaType === 'video') {
+                        imageContainer.classList.add('hidden');
+                        videoContainer.classList.remove('hidden');
+                        
+                        // Clear previous video and add new one
+                        videoContainer.innerHTML = '';
+                        const video = document.createElement('video');
+                        video.controls = true;
+                        video.className = "w-full rounded-lg";
+                        
+                        const source = document.createElement('source');
+                        source.src = question.mediaPath;
+                        source.type = "video/mp4";
+                        
+                        video.appendChild(source);
+                        video.appendChild(document.createTextNode("Your browser does not support the video tag."));
+                        videoContainer.appendChild(video);
+                    }
+                } else {
+                    mediaContainer.classList.add('hidden');
+                    imageContainer.classList.add('hidden');
+                    videoContainer.classList.add('hidden');
+                }
+                
+                // Clear previous options
+                optionsContainer.innerHTML = '';
+                
+                // Add new options
+                question.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-5 h-5 border border-gray-500 rounded-full flex items-center justify-center">
+                                    <div class="option-selected-indicator w-3 h-3 rounded-full bg-[#00f2ea] hidden"></div>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <p>${option}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    optionElement.addEventListener('click', () => {
+                        if (!answeredCurrentQuestion) {
+                            selectOption(index);
+                        }
+                    });
+                    optionsContainer.appendChild(optionElement);
+                });
+                
+                // Hide next/finish buttons initially
+                nextBtn.classList.add('hidden');
+                finishBtn.classList.add('hidden');
+            }
+            
+            function selectOption(selectedIndex) {
+                answeredCurrentQuestion = true;
+                clearInterval(questionTimer);
+                showAnswer(selectedIndex);
+            }
+            
+            function showAnswer(selectedIndex) {
+                const question = quizData[currentQuestion];
+                const options = document.querySelectorAll('.option');
+                
+                if (selectedIndex >= 0) {
+                    const selectedOption = options[selectedIndex];
+                    
+                    // Mark selected option
+                    selectedOption.classList.add('selected');
+                    selectedOption.querySelector('.option-selected-indicator').classList.remove('hidden');
+                    
+                    // Store user answer
+                    userAnswers[currentQuestion] = selectedIndex;
+                }
+                
+                // Show correct/incorrect feedback
+                options.forEach((option, index) => {
+                    if (index === question.correctAnswer) {
+                        option.classList.add('correct');
+                    } else if (index === selectedIndex && selectedIndex !== question.correctAnswer) {
+                        option.classList.add('incorrect');
+                    }
+                });
+                
+                // Show explanation
+                explanationContainer.classList.remove('hidden');
+                explanationText.textContent = question.explanation;
+                
+                // Update score if correct
+                if (selectedIndex === question.correctAnswer) {
+                    score += question.points;
+                    pointsDisplay.textContent = score;
+                    
+                    // Show points popup
+                    pointsPopup.textContent = `+${question.points}`;
+                    pointsPopup.style.animation = 'points-animation 1.5s ease-out forwards';
+                    
+                    // Create confetti
+                    createConfetti();
+                    
+                    // Create floating points
+                    createFloatingPoints(selectedIndex);
+                    
+                    // Reset animation after it completes
+                    setTimeout(() => {
+                        pointsPopup.style.animation = 'none';
+                    }, 1500);
+                }
+                
+                // Show next/finish button
+                if (currentQuestion < quizData.length - 1) {
+                    nextBtn.classList.remove('hidden');
+                } else {
+                    finishBtn.classList.remove('hidden');
+                }
+                
+                // Disable option selection
+                options.forEach(option => {
+                    option.style.pointerEvents = 'none';
+                });
+            }
+            
+            function createFloatingPoints(selectedIndex) {
+                if (selectedIndex < 0) return;
+                
+                const options = document.querySelectorAll('.option');
+                const selectedOption = options[selectedIndex];
+                const rect = selectedOption.getBoundingClientRect();
+                
+                // Create 3 floating point elements at different positions
+                for (let i = 0; i < 3; i++) {
+                    const pointsElement = document.createElement('div');
+                    pointsElement.className = 'points-added';
+                    pointsElement.textContent = '+100';
+                    
+                    // Position relative to the selected option
+                    pointsElement.style.left = `${rect.left + rect.width/2 + (i-1)*30}px`;
+                    pointsElement.style.top = `${rect.top + rect.height/2}px`;
+                    pointsElement.style.animationDelay = `${i * 0.2}s`;
+                    
+                    document.body.appendChild(pointsElement);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        pointsElement.remove();
+                    }, 1500);
+                }
+            }
+            
+            function createConfetti() {
+                const colors = ['#00f2ea', '#00c4fc', '#ffffff', '#fe2c55'];
+                const confettiCount = 50;
+                const appContainer = document.getElementById('app');
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = `${Math.random() * 100}%`;
+                    
+                    // Randomize confetti size
+                    const size = Math.random() * 8 + 5; // 5-13px
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    
+                    // Randomize animation duration and delay
+                    confetti.style.animationDuration = `${Math.random() * 2 + 2}s`;
+                    confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                    
+                    // Add some rotation
+                    const rotation = Math.random() * 360;
+                    confetti.style.transform = `rotate(${rotation}deg)`;
+                    
+                    appContainer.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000); // Slightly longer than animation to ensure all confetti is removed
+                }
+            }
+            
+            function nextQuestion() {
+                currentQuestion++;
+                loadQuestion();
+            }
+            
+            function showResults() {
+                clearInterval(questionTimer);
+                questionScreen.classList.add('hidden');
+                resultsScreen.classList.remove('hidden');
+                
+                // Calculate total time
+                const endTime = new Date();
+                totalSeconds = Math.floor((endTime - startTime) / 1000);
+                
+                // Update score display
+                scoreValue.textContent = score;
+                const percentage = (score / 400) * 100;
+                const circumference = 2 * Math.PI * 45;
+                scoreCircle.style.strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
+                
+                // Update rating
+                if (score >= 400) {
+                    ratingContainer.className = 'mb-6 p-4 rounded-lg bg-green-900 bg-opacity-30';
+                    ratingText.className = 'text-xl font-bold mb-2 text-center text-green-400';
+                    ratingText.textContent = '🟢 Ready to Moderate';
+                    ratingDescription.textContent = 'Excellent! You have demonstrated strong policy understanding and good judgment.';
+                } else if (score >= 200) {
+                    ratingContainer.className = 'mb-6 p-4 rounded-lg bg-yellow-900 bg-opacity-30';
+                    ratingText.className = 'text-xl font-bold mb-2 text-center text-yellow-400';
+                    ratingText.textContent = '🟡 Needs Policy Training';
+                    ratingDescription.textContent = 'You have potential but need more training on content policies and guidelines.';
+                } else {
+                    ratingContainer.className = 'mb-6 p-4 rounded-lg bg-red-900 bg-opacity-30';
+                    ratingText.className = 'text-xl font-bold mb-2 text-center text-red-400';
+                    ratingText.textContent = '🔴 High Risk / Not Suitable';
+                    ratingDescription.textContent = 'You need significant improvement in understanding content moderation policies.';
+                }
+                
+                // Update time
+                totalTime.textContent = formatTime(totalSeconds);
+                
+                // Update badges
+                updateBadges();
+                
+                // Animate score
+                animateScore();
+            }
+            
+            function updateBadges() {
+                const badges = [
+                    document.getElementById('badge-1'),
+                    document.getElementById('badge-2'),
+                    document.getElementById('badge-3'),
+                    document.getElementById('badge-4')
+                ];
+                
+                // Policy Enforcer badge
+                if (userAnswers[1] === quizData[1].correctAnswer) {
+                    badges[0].classList.add('earned');
+                    badges[0].querySelector('.badge-icon svg').classList.add('text-black');
+                }
+                
+                // Misinformation Hunter badge
+                if (userAnswers[0] === quizData[0].correctAnswer) {
+                    badges[1].classList.add('earned');
+                    badges[1].querySelector('.badge-icon svg').classList.add('text-black');
+                }
+                
+                // Safety Guardian badge
+                if (userAnswers[2] === quizData[2].correctAnswer) {
+                    badges[2].classList.add('earned');
+                    badges[2].querySelector('.badge-icon svg').classList.add('text-black');
+                }
+                
+                // Quick Responder badge
+                if (totalSeconds < 180) { // Less than 3 minutes
+                    badges[3].classList.add('earned');
+                    badges[3].querySelector('.badge-icon svg').classList.add('text-black');
+                }
+            }
+            
+            function animateScore() {
+                let currentScore = 0;
+                const duration = 1500; // ms
+                const interval = 50; // ms
+                const steps = duration / interval;
+                const increment = score / steps;
+                
+                const animation = setInterval(() => {
+                    currentScore += increment;
+                    if (currentScore >= score) {
+                        currentScore = score;
+                        clearInterval(animation);
+                    }
+                    scoreValue.textContent = Math.floor(currentScore);
+                }, interval);
+            }
+            
+            function showCertificate() {
+                resultsScreen.classList.add('hidden');
+                certificateScreen.classList.remove('hidden');
+                
+                // Update certificate
+                certificateScore.textContent = `${score/100}/4`;
+                
+                if (score >= 400) {
+                    certificateRating.textContent = 'Ready to Moderate';
+                    certificateRating.className = 'text-xl font-bold mb-1 text-green-600';
+                } else if (score >= 200) {
+                    certificateRating.textContent = 'Needs Policy Training';
+                    certificateRating.className = 'text-xl font-bold mb-1 text-yellow-600';
+                } else {
+                    certificateRating.textContent = 'High Risk / Not Suitable';
+                    certificateRating.className = 'text-xl font-bold mb-1 text-red-600';
+                }
+                
+                const today = new Date();
+                certificateDate.textContent = today.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+            
+            function backToResults() {
+                certificateScreen.classList.add('hidden');
+                resultsScreen.classList.remove('hidden');
+            }
+            
+            function downloadCertificate() {
+                // In a real implementation, this would generate a PDF or image
+                // For this demo, we'll just show an alert
+                alert('Certificate download started! In a real implementation, this would download a PDF or image file.');
+            }
+            
+            function restartQuiz() {
+                currentQuestion = 0;
+                score = 0;
+                userAnswers = [];
+                totalSeconds = 0;
+                timeLeft = 30;
+                answeredCurrentQuestion = false;
+                
+                pointsDisplay.textContent = '0';
+                
+                resultsScreen.classList.add('hidden');
+                startScreen.classList.remove('hidden');
+            }
+            
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94df75dde0743faf',t:'MTc0OTYyNzYyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
